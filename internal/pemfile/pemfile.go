@@ -160,8 +160,8 @@ func wrapPKCS8(kp *hpke.KeyPair) ([]byte, error) {
 			return nil, fmt.Errorf("pemfile: marshal X25519 inner OCTET STRING: %w", err)
 		}
 		p := pkcs8{
-			Version: 0,
-			Algo:    pkcs8AlgID{Algorithm: oidX25519},
+			Version:    0,
+			Algo:       pkcs8AlgID{Algorithm: oidX25519},
 			PrivateKey: inner,
 		}
 		return asn1.Marshal(p)

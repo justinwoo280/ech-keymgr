@@ -46,8 +46,10 @@
 //	section:     default             # optional; default "default"
 //
 // API documentation:
-//   https://techdocs.akamai.com/edge-dns/reference/edge-dns-api
+//
+//	https://techdocs.akamai.com/edge-dns/reference/edge-dns-api
 //
 // Required API client permissions:
-//   DNS Zone Management — READ-WRITE
+//
+//	DNS Zone Management — READ-WRITE
 package akamai

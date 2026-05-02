@@ -21,5 +21,6 @@
 //	server_id:   localhost          # optional; default "localhost"
 //
 // PowerDNS API documentation:
-//   https://doc.powerdns.com/authoritative/http-api/zone.html
+//
+//	https://doc.powerdns.com/authoritative/http-api/zone.html
 package powerdns

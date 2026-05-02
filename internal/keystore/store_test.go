@@ -163,7 +163,7 @@ func TestDelete_RemovesFileAndEntry(t *testing.T) {
 
 func TestPruneExpired_OnlyExpiresGrace(t *testing.T) {
 	s := tmpStore(t)
-	keep, _ := s.Add([]byte("KEEP"), 0x10)         // remains current
+	keep, _ := s.Add([]byte("KEEP"), 0x10) // remains current
 	expire, _ := s.Add([]byte("EXPIRE"), 0x20)
 	// Move expire into grace with a past drop time.
 	if err := s.SetState(expire.ConfigID, StateGrace, time.Time{}, time.Now().Add(-time.Hour)); err != nil {

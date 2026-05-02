@@ -138,8 +138,8 @@ func TestVerify_HappyPath_AllOK(t *testing.T) {
 }
 
 func TestVerify_KeyInDNSNotStore_Warns(t *testing.T) {
-	store := storeWithIDs(t)                  // empty
-	src := &memSource{                        // DNS has 0xAA
+	store := storeWithIDs(t) // empty
+	src := &memSource{       // DNS has 0xAA
 		rdata: []string{rdataWithECH(b64ListWithIDs(t, 0xAA))}, name: "drift",
 	}
 	rep, _ := Verify(context.Background(), Request{
@@ -153,8 +153,8 @@ func TestVerify_KeyInDNSNotStore_Warns(t *testing.T) {
 }
 
 func TestVerify_KeyExpectedButMissingFromDNS_Warns(t *testing.T) {
-	store := storeWithIDs(t, 0xBB)            // local has Current 0xBB
-	src := &memSource{                        // DNS publishes only 0xAA
+	store := storeWithIDs(t, 0xBB) // local has Current 0xBB
+	src := &memSource{             // DNS publishes only 0xAA
 		rdata: []string{rdataWithECH(b64ListWithIDs(t, 0xAA))}, name: "drift",
 	}
 	rep, _ := Verify(context.Background(), Request{

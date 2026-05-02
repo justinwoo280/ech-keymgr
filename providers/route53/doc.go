@@ -7,9 +7,9 @@
 //
 //   - github.com/aws/aws-sdk-go-v2/service/route53  (the typed client)
 //   - github.com/aws/aws-sdk-go-v2/config           (default credential
-//                                                    chain: env vars,
-//                                                    shared profile,
-//                                                    EC2/ECS/IRSA, …)
+//     chain: env vars,
+//     shared profile,
+//     EC2/ECS/IRSA, …)
 //
 // We use the SDK's UPSERT semantics so a single call covers both
 // "create new record" and "replace existing record" — same as our
@@ -37,12 +37,13 @@
 //
 // Required IAM permissions:
 //
-//   route53:ChangeResourceRecordSets
-//   route53:ListResourceRecordSets
+//	route53:ChangeResourceRecordSets
+//	route53:ListResourceRecordSets
 //
 // Both can be scoped to your hosted zone ARN
 // (`arn:aws:route53:::hostedzone/<id>`).
 //
 // AWS API documentation:
-//   https://docs.aws.amazon.com/Route53/latest/APIReference/
+//
+//	https://docs.aws.amazon.com/Route53/latest/APIReference/
 package route53

@@ -102,11 +102,11 @@ func TestSignal_DefaultIsSIGHUP(t *testing.T) {
 
 func TestSignal_ReadsPID_RejectsBadInput(t *testing.T) {
 	cases := map[string]string{
-		"empty":         "",
-		"non-numeric":   "abc\n",
-		"negative":      "-1",
-		"zero":          "0",
-		"only-newline":  "\n",
+		"empty":        "",
+		"non-numeric":  "abc\n",
+		"negative":     "-1",
+		"zero":         "0",
+		"only-newline": "\n",
 	}
 	for name, body := range cases {
 		t.Run(name, func(t *testing.T) {

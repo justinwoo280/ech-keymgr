@@ -111,7 +111,7 @@ func TestECHConfigBase64(t *testing.T) {
 		t.Errorf("base64 output suspect: %q", b64)
 	}
 	// Length should be ~ ceil(4/3 * len(raw))
-	if len(b64) < (len(f.ConfigListBytes)*4/3) {
+	if len(b64) < (len(f.ConfigListBytes) * 4 / 3) {
 		t.Errorf("base64 too short")
 	}
 }
@@ -127,7 +127,7 @@ func TestVerifyECHConfigList_DetectsMismatch(t *testing.T) {
 	// Build a list whose ECHConfig points at a DIFFERENT public key.
 	other, _ := hpke.GenerateKeyPair(hpke.KEMX25519HKDFSHA256)
 	cfg := echconfig.Config{
-		ConfigID:  1, KEMID: echconfig.KEMX25519HKDFSHA256,
+		ConfigID: 1, KEMID: echconfig.KEMX25519HKDFSHA256,
 		PublicKey: other.PublicKey,
 		CipherSuites: []echconfig.CipherSuite{
 			{KDF: echconfig.KDFHKDFSHA256, AEAD: echconfig.AEADAES128GCM},

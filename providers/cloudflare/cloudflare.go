@@ -37,8 +37,8 @@ type Provider struct {
 	apiToken string
 	http     *http.Client
 
-	mu       sync.RWMutex
-	zoneIDs  map[string]string // zone name → zone id (LRU-less; zones are O(10))
+	mu      sync.RWMutex
+	zoneIDs map[string]string // zone name → zone id (LRU-less; zones are O(10))
 }
 
 // compile-time interface assertion.
@@ -358,11 +358,11 @@ type createRecordResponse struct {
 // containing the full presentation form ("1 . alpn=..."); we prefer
 // `data` when present, fall back to `content` otherwise.
 type httpsRecord struct {
-	ID      string          `json:"id"`
-	Name    string          `json:"name"`
-	Type    string          `json:"type"`
-	TTL     uint32          `json:"ttl"`
-	Content string          `json:"content"`
+	ID      string           `json:"id"`
+	Name    string           `json:"name"`
+	Type    string           `json:"type"`
+	TTL     uint32           `json:"ttl"`
+	Content string           `json:"content"`
 	Data    *httpsRecordData `json:"data,omitempty"`
 }
 

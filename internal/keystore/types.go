@@ -46,12 +46,12 @@ func (s State) IsValid() bool {
 // Filename is relative to the store directory; absolute paths never
 // appear in the metadata so the directory can be safely moved.
 type Entry struct {
-	Filename         string    `json:"filename"`
-	ConfigID         uint8     `json:"config_id"`
-	State            State     `json:"state"`
-	CreatedAt        time.Time `json:"created_at"`
-	InDNSSince       time.Time `json:"in_dns_since,omitempty"`
-	ScheduledDropAt  time.Time `json:"scheduled_drop_at,omitempty"`
+	Filename        string    `json:"filename"`
+	ConfigID        uint8     `json:"config_id"`
+	State           State     `json:"state"`
+	CreatedAt       time.Time `json:"created_at"`
+	InDNSSince      time.Time `json:"in_dns_since,omitempty"`
+	ScheduledDropAt time.Time `json:"scheduled_drop_at,omitempty"`
 }
 
 // MetaVersion is the on-disk schema version of .meta.json. Bumped if
@@ -64,11 +64,11 @@ const metaFileName = ".meta.json"
 
 // Meta is the on-disk shape of .meta.json (entire contents).
 type Meta struct {
-	Version    int     `json:"version"`
-	RecordFQDN string  `json:"record_fqdn"`
-	PublicName string  `json:"public_name"`
+	Version    int       `json:"version"`
+	RecordFQDN string    `json:"record_fqdn"`
+	PublicName string    `json:"public_name"`
 	UpdatedAt  time.Time `json:"updated_at"`
-	Keys       []Entry `json:"keys"`
+	Keys       []Entry   `json:"keys"`
 }
 
 // ErrEmpty is returned by Current() when the store has no keys yet

@@ -71,13 +71,13 @@ func TestParseAndValidate_DefaultEnvFallback(t *testing.T) {
 func TestExpandEnv_Forms(t *testing.T) {
 	t.Setenv("FOO", "bar")
 	cases := map[string]string{
-		"${FOO}":                       "bar",
-		"$FOO":                         "bar",
-		"${UNSET}":                     "",
-		"${UNSET:-fallback}":           "fallback",
-		"prefix-${FOO}-suffix":         "prefix-bar-suffix",
-		"$":                            "$",
-		"${BAD CHARS}":                 "${BAD CHARS}", // unmatched, left alone
+		"${FOO}":               "bar",
+		"$FOO":                 "bar",
+		"${UNSET}":             "",
+		"${UNSET:-fallback}":   "fallback",
+		"prefix-${FOO}-suffix": "prefix-bar-suffix",
+		"$":                    "$",
+		"${BAD CHARS}":         "${BAD CHARS}", // unmatched, left alone
 	}
 	for in, want := range cases {
 		if got := ExpandEnv(in); got != want {

@@ -85,7 +85,9 @@ func (f *fakeCF) handle(w http.ResponseWriter, r *http.Request) {
 		}
 		writeJSON(w, createRecordResponse{
 			envelope: envelope{Success: true},
-			Result:   struct{ ID string `json:"id"` }{ID: id},
+			Result: struct {
+				ID string `json:"id"`
+			}{ID: id},
 		})
 	case r.Method == http.MethodDelete && strings.Contains(r.URL.Path, "/dns_records/"):
 		id := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
@@ -246,11 +248,11 @@ func TestDelete_Idempotent(t *testing.T) {
 
 func TestSplitRDATA(t *testing.T) {
 	cases := []struct {
-		in       string
-		pri      uint16
-		target   string
-		params   string
-		wantErr  bool
+		in      string
+		pri     uint16
+		target  string
+		params  string
+		wantErr bool
 	}{
 		{`1 . alpn="h2" ech="AEX"`, 1, ".", `alpn="h2" ech="AEX"`, false},
 		{`0 cdn.example.net.`, 0, "cdn.example.net.", "", false},

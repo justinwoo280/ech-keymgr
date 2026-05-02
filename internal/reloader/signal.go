@@ -79,31 +79,45 @@ func readPID(path string) (int, error) {
 	return pid, nil
 }
 
-// parseSignal converts a textual signal name (case-insensitive,
-// optional "SIG" prefix) into a syscall.Signal. Empty input
-// defaults to SIGHUP, the right answer for nginx.
+// parseSignal normalises a user-provided signal name (e.g. "SIGHUP",
+// "hup", "USR1") and returns the platform-specific syscall.Signal.
+//
+// The actual signal table lives in signal_unix.go / signal_windows.go
+// because Windows does not define SIGHUP, SIGUSR1, SIGUSR2 or SIGQUIT.
+// On Windows the function therefore rejects every name except SIGTERM
+// (and SIGINT) — operators reloading a Windows nginx should use the
+// `exec` strategy with `nginx -s reload` instead.
 func parseSignal(name string) (syscall.Signal, error) {
 	name = strings.TrimSpace(strings.ToUpper(name))
 	if name == "" {
-		return syscall.SIGHUP, nil
+		return defaultReloadSignal, nil
 	}
 	if !strings.HasPrefix(name, "SIG") {
 		name = "SIG" + name
 	}
-	switch name {
-	case "SIGHUP":
-		return syscall.SIGHUP, nil
-	case "SIGUSR1":
-		return syscall.SIGUSR1, nil
-	case "SIGUSR2":
-		return syscall.SIGUSR2, nil
-	case "SIGTERM":
-		// Allow but warn-via-name only; ech-keymgr never wants
-		// to terminate the server during rotation, but the
-		// option lets users do unusual things on purpose.
-		return syscall.SIGTERM, nil
-	case "SIGQUIT":
-		return syscall.SIGQUIT, nil
+	if sig, ok := signalTable[name]; ok {
+		return sig, nil
 	}
-	return 0, fmt.Errorf("reloader: unsupported signal %q (want SIGHUP|SIGUSR1|SIGUSR2|SIGTERM|SIGQUIT)", name)
+	return 0, fmt.Errorf(
+		"reloader: unsupported signal %q on this platform (supported: %s); "+
+			"if you are on Windows, use the 'exec' reload strategy instead",
+		name, supportedSignalList(),
+	)
+}
+
+// supportedSignalList renders the known signals as a sorted, |-joined
+// string for error messages. We keep ordering deterministic so test
+// assertions don't flap.
+func supportedSignalList() string {
+	keys := make([]string, 0, len(signalTable))
+	for k := range signalTable {
+		keys = append(keys, k)
+	}
+	// Cheap sort — small, finite list.
+	for i := 1; i < len(keys); i++ {
+		for j := i; j > 0 && keys[j] < keys[j-1]; j-- {
+			keys[j-1], keys[j] = keys[j], keys[j-1]
+		}
+	}
+	return strings.Join(keys, "|")
 }

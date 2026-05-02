@@ -15,7 +15,8 @@
 //   - Delete is idempotent (missing record → nil error)
 //
 // Cloudflare API documentation:
-//   https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-list-dns-records
+//
+//	https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-list-dns-records
 //
 // Configuration shape (under credentials.<ref> in config.yaml):
 //

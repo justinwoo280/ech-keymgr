@@ -130,8 +130,8 @@ func setup(t *testing.T) (*Rotator, *memProv, *keystore.Store, *fixedClock) {
 
 func TestNew_RequiresFields(t *testing.T) {
 	cases := []Config{
-		{PublicName: "p", DNSZone: "z"},  // no RecordFQDN
-		{RecordFQDN: "r", DNSZone: "z"},  // no PublicName
+		{PublicName: "p", DNSZone: "z"},    // no RecordFQDN
+		{RecordFQDN: "r", DNSZone: "z"},    // no PublicName
 		{RecordFQDN: "r", PublicName: "p"}, // no DNSZone
 	}
 	store, _ := keystore.OpenOrInit(t.TempDir(), "x", "x")

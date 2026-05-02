@@ -11,20 +11,20 @@ import (
 // pointer into the Credentials map), so consumers don't need to
 // re-look anything up.
 type Config struct {
-	Domains      []Domain                `yaml:"domains"`
-	Verification Verification            `yaml:"verification"`
-	Credentials  map[string]*Credential  `yaml:"credentials"`
+	Domains      []Domain               `yaml:"domains"`
+	Verification Verification           `yaml:"verification"`
+	Credentials  map[string]*Credential `yaml:"credentials"`
 }
 
 // Domain is one managed (record_fqdn, public_name) pair.
 type Domain struct {
-	RecordFQDN   string         `yaml:"record_fqdn"`
-	PublicName   string         `yaml:"public_name"`
-	Keydir       string         `yaml:"keydir"`
-	Rotation     Rotation       `yaml:"rotation"`
-	CipherSuites []string       `yaml:"cipher_suites"`
-	Reload       ReloadCfg      `yaml:"reload"`
-	DNS          DNSCfg         `yaml:"dns"`
+	RecordFQDN   string    `yaml:"record_fqdn"`
+	PublicName   string    `yaml:"public_name"`
+	Keydir       string    `yaml:"keydir"`
+	Rotation     Rotation  `yaml:"rotation"`
+	CipherSuites []string  `yaml:"cipher_suites"`
+	Reload       ReloadCfg `yaml:"reload"`
+	DNS          DNSCfg    `yaml:"dns"`
 }
 
 // Rotation governs the schedule and grace policy.
@@ -49,11 +49,11 @@ type ReloadCfg struct {
 // `Credentials` is populated by Load() after cross-referencing
 // `CredentialsRef` against the top-level Credentials map.
 type DNSCfg struct {
-	Provider        string      `yaml:"provider"`
-	Zone            string      `yaml:"zone"`
-	CredentialsRef  string      `yaml:"credentials_ref"`
-	TTL             uint32      `yaml:"ttl"`
-	Credentials     *Credential `yaml:"-"` // resolved by Load
+	Provider       string      `yaml:"provider"`
+	Zone           string      `yaml:"zone"`
+	CredentialsRef string      `yaml:"credentials_ref"`
+	TTL            uint32      `yaml:"ttl"`
+	Credentials    *Credential `yaml:"-"` // resolved by Load
 }
 
 // Verification controls soft DNS reconciliation.
@@ -72,7 +72,7 @@ type Verification struct {
 // adding a new credential field for a new provider needs no change
 // in this package).
 type Credential struct {
-	Provider string                 `yaml:"provider"`
+	Provider string `yaml:"provider"`
 	// Extra holds every other field present in the YAML for this
 	// credential. It is the map the provider's Factory consumes.
 	Extra map[string]any `yaml:",inline"`
@@ -80,11 +80,11 @@ type Credential struct {
 
 // Defaults applied if a YAML field is zero.
 const (
-	DefaultRotationInterval    = 3 * time.Hour
-	DefaultGracePeriod         = 6 * time.Hour
-	DefaultKeepCount           = 3
-	DefaultDNSTTL              = uint32(300)
-	DefaultVerifyDelay         = 30 * time.Second
-	DefaultReloadStrategy      = "signal"
-	DefaultReloadSignal        = "SIGHUP"
+	DefaultRotationInterval = 3 * time.Hour
+	DefaultGracePeriod      = 6 * time.Hour
+	DefaultKeepCount        = 3
+	DefaultDNSTTL           = uint32(300)
+	DefaultVerifyDelay      = 30 * time.Second
+	DefaultReloadStrategy   = "signal"
+	DefaultReloadSignal     = "SIGHUP"
 )

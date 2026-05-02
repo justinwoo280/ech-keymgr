@@ -32,16 +32,16 @@ type Finding struct {
 
 // Stable codes (kept short, machine-readable, ALL_CAPS):
 const (
-	CodeRRPresent          = "DNS_HTTPS_RR_PRESENT"
-	CodeRRMissing          = "DNS_HTTPS_RR_MISSING"
-	CodeRRMultiple         = "DNS_HTTPS_RR_MULTIPLE"
-	CodeECHParamMissing    = "DNS_ECH_PARAM_MISSING"
-	CodeECHBadBase64       = "DNS_ECH_BAD_BASE64"
-	CodeECHListBadFormat   = "DNS_ECH_LIST_BAD_FORMAT"
-	CodeECHListEntryCount  = "DNS_ECH_LIST_ENTRY_COUNT"
-	CodeKeyInDNSAndStore   = "KEY_IN_DNS_AND_STORE"
-	CodeKeyInDNSNotStore   = "KEY_IN_DNS_NOT_STORE"
-	CodeKeyInStoreNotDNS   = "KEY_IN_STORE_NOT_DNS"
+	CodeRRPresent           = "DNS_HTTPS_RR_PRESENT"
+	CodeRRMissing           = "DNS_HTTPS_RR_MISSING"
+	CodeRRMultiple          = "DNS_HTTPS_RR_MULTIPLE"
+	CodeECHParamMissing     = "DNS_ECH_PARAM_MISSING"
+	CodeECHBadBase64        = "DNS_ECH_BAD_BASE64"
+	CodeECHListBadFormat    = "DNS_ECH_LIST_BAD_FORMAT"
+	CodeECHListEntryCount   = "DNS_ECH_LIST_ENTRY_COUNT"
+	CodeKeyInDNSAndStore    = "KEY_IN_DNS_AND_STORE"
+	CodeKeyInDNSNotStore    = "KEY_IN_DNS_NOT_STORE"
+	CodeKeyInStoreNotDNS    = "KEY_IN_STORE_NOT_DNS"
 	CodeKeyExpectedNotInDNS = "KEY_EXPECTED_NOT_IN_DNS"
 )
 

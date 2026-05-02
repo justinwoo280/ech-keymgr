@@ -73,9 +73,9 @@ func TestParse_KeylessParam(t *testing.T) {
 func TestParse_Errors(t *testing.T) {
 	cases := []string{
 		``,
-		`abc . ech="x"`,            // non-numeric priority
-		`1 . ech="missing-quote`,   // unterminated quote
-		`1 . =val`,                 // empty key
+		`abc . ech="x"`,          // non-numeric priority
+		`1 . ech="missing-quote`, // unterminated quote
+		`1 . =val`,               // empty key
 	}
 	for _, c := range cases {
 		if _, err := Parse(c); err == nil {

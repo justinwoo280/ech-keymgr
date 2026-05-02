@@ -86,9 +86,9 @@ func TestNew_RequiresHostedZoneID(t *testing.T) {
 
 func TestNew_StripsZonePrefix(t *testing.T) {
 	p, err := New(map[string]any{
-		"hosted_zone_id": "/hostedzone/Z123ABC",
-		"region":         "us-east-1",
-		"access_key_id":  "AKIA000000000000",
+		"hosted_zone_id":    "/hostedzone/Z123ABC",
+		"region":            "us-east-1",
+		"access_key_id":     "AKIA000000000000",
 		"secret_access_key": "secret",
 	})
 	if err != nil {
