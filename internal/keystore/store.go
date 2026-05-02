@@ -59,7 +59,7 @@ func OpenOrInit(dir, recordFQDN, publicName string) (*Store, error) {
 		if !errors.Is(err, fs.ErrNotExist) {
 			return nil, err
 		}
-		// Initialise a fresh metadata file.
+		// Initialize a fresh metadata file.
 		s.meta = Meta{
 			Version:    MetaVersion,
 			RecordFQDN: recordFQDN,
@@ -155,7 +155,7 @@ func (s *Store) Add(pemBytes []byte, configID uint8) (Entry, error) {
 
 	now := time.Now().UTC()
 	name := fmt.Sprintf("%s-%02x.ech", now.Format("20060102T150405Z"), configID)
-	if err := s.uniqueName(&name, configID); err != nil {
+	if err := s.uniqueName(&name); err != nil {
 		return Entry{}, err
 	}
 	if err := atomicWrite(filepath.Join(s.dir, name), pemBytes, 0o600); err != nil {
@@ -279,7 +279,7 @@ func (s *Store) PruneExpired(now time.Time) ([]uint8, error) {
 // uniqueName ensures `name` does not collide with anything already
 // in the store. If it does, suffixes a short random tag. Caller must
 // hold s.mu.
-func (s *Store) uniqueName(name *string, configID uint8) error {
+func (s *Store) uniqueName(name *string) error {
 	for _, e := range s.meta.Keys {
 		if e.Filename == *name {
 			suffix, err := randomSuffix()

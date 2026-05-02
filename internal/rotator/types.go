@@ -70,7 +70,7 @@ type Config struct {
 	// Tests inject a fake clock to avoid real sleeps.
 	Clock Clock
 
-	// Sleep blocks for the given duration, honouring ctx. Default:
+	// Sleep blocks for the given duration, honoring ctx. Default:
 	// time.Sleep with ctx polling. Tests inject a fake to make
 	// SettleDelay zero-cost.
 	Sleep func(ctx context.Context, d time.Duration) error
@@ -140,7 +140,7 @@ func (c *Config) applyDefaults() {
 	}
 }
 
-// realSleep blocks for d, honouring ctx cancellation.
+// realSleep blocks for d, honoring ctx cancellation.
 func realSleep(ctx context.Context, d time.Duration) error {
 	if d <= 0 {
 		return ctx.Err()

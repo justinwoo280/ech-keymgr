@@ -98,7 +98,7 @@ func TestAdd_AtomicWritesAndPerms(t *testing.T) {
 func TestList_NewestFirst(t *testing.T) {
 	s := tmpStore(t)
 	for i := uint8(1); i <= 3; i++ {
-		if _, err := s.Add([]byte{byte('A' + i - 1)}, i); err != nil {
+		if _, err := s.Add([]byte{'A' + i - 1}, i); err != nil {
 			t.Fatal(err)
 		}
 		time.Sleep(2 * time.Millisecond) // ensure distinct CreatedAt
@@ -107,7 +107,7 @@ func TestList_NewestFirst(t *testing.T) {
 	if len(lst) != 3 {
 		t.Fatalf("len=%d", len(lst))
 	}
-	if !(lst[0].CreatedAt.After(lst[1].CreatedAt) && lst[1].CreatedAt.After(lst[2].CreatedAt)) {
+	if !lst[0].CreatedAt.After(lst[1].CreatedAt) || !lst[1].CreatedAt.After(lst[2].CreatedAt) {
 		t.Errorf("not sorted desc: %v", lst)
 	}
 }

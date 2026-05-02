@@ -19,7 +19,7 @@ type Rotator struct {
 	cfg  Config
 	deps Deps
 
-	mu sync.Mutex // serialises Rotate calls
+	mu sync.Mutex // serializes Rotate calls
 }
 
 // New constructs a Rotator. Config is filled with defaults; Deps must

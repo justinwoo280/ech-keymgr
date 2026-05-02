@@ -3,7 +3,6 @@ package keystore
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -67,16 +66,6 @@ func atomicWrite(path string, data []byte, mode os.FileMode) error {
 	if d, err := os.Open(dir); err == nil {
 		_ = d.Sync()
 		_ = d.Close()
-	}
-	return nil
-}
-
-// removeIfExists deletes path, ignoring "no such file" errors. Used
-// during rollback paths where it's not interesting whether the file
-// was actually present.
-func removeIfExists(path string) error {
-	if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return err
 	}
 	return nil
 }

@@ -30,7 +30,7 @@ func (m *memSource) GetHTTPSRDATA(_ context.Context, _, _ string) ([]string, err
 	return out, nil
 }
 
-// helper: make a freshly-initialised store with N entries and known
+// helper: make a freshly-initialized store with N entries and known
 // config_ids; entries 0 are StateCurrent, the rest StatePrevious.
 func storeWithIDs(t *testing.T, ids ...uint8) *keystore.Store {
 	t.Helper()

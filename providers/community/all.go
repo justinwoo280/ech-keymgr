@@ -8,5 +8,8 @@
 package community
 
 import (
+	// mock is the in-memory reference provider; importing it here
+	// triggers its init() so dns.Lookup("mock") works without users
+	// needing to import the package directly.
 	_ "github.com/justinwoo280/ech-keymgr/providers/community/mock"
 )

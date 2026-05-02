@@ -34,9 +34,9 @@ func (s *signalReloader) Name() string { return "signal" }
 
 // Reload reads the pid_file, sends s.sig to the PID, and returns.
 //
-// We don't honour ctx.Deadline() here because os.Process.Signal is
+// We don't honor ctx.Deadline() here because os.Process.Signal is
 // non-blocking; if it's slow that's an OS problem we can't paper
-// over. We do still respect ctx.Err() at entry so a cancelled
+// over. We do still respect ctx.Err() at entry so a canceled
 // context skips the work.
 func (s *signalReloader) Reload(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {

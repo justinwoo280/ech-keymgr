@@ -63,7 +63,7 @@ func (p *Provider) DeleteHTTPSRDATA(_ context.Context, zone, name string) error 
 }
 
 // Snapshot returns a deep copy of the entire underlying state, useful
-// for tests asserting on rotator behaviour.
+// for tests asserting on rotator behavior.
 func (p *Provider) Snapshot() map[string][]string {
 	p.mu.RLock()
 	defer p.mu.RUnlock()

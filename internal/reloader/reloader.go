@@ -50,7 +50,7 @@ const (
 	StrategySystemd Strategy = "systemd"
 )
 
-// IsValid reports whether s is a recognised strategy.
+// IsValid reports whether s is a recognized strategy.
 func (s Strategy) IsValid() bool {
 	switch s {
 	case StrategySignal, StrategyExec, StrategySystemd:

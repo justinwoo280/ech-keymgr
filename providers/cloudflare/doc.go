@@ -4,7 +4,7 @@
 // This provider is the REFERENCE implementation for community
 // contributors: it is intentionally compact (~ 250 lines + tests),
 // uses only the Go standard library plus pkg/dns and pkg/svcb, and
-// demonstrates every contract a new provider must honour:
+// demonstrates every contract a new provider must honor:
 //
 //   - Self-registration in init()
 //   - Build-tag gating ("cloudflare" || "all")

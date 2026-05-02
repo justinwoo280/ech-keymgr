@@ -353,7 +353,7 @@ func TestPickConfigID_AvoidsCollision(t *testing.T) {
 	// Direct unit test against a populated store.
 	store, _ := keystore.OpenOrInit(t.TempDir(), "x", "x")
 	for id := uint8(0); id < 10; id++ {
-		if _, err := store.Add([]byte{byte(id)}, id); err != nil {
+		if _, err := store.Add([]byte{id}, id); err != nil {
 			t.Fatal(err)
 		}
 	}

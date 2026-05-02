@@ -76,7 +76,7 @@ func (f *fakeAkamai) handle(w http.ResponseWriter, r *http.Request) {
 		f.rrset = nil
 		w.WriteHeader(http.StatusNoContent)
 	default:
-		http.Error(w, "unsupported", 405)
+		http.Error(w, "unsupported", http.StatusMethodNotAllowed)
 	}
 }
 
@@ -86,7 +86,7 @@ func newProvider(t *testing.T, f *fakeAkamai) *Provider {
 	t.Helper()
 	u, _ := url.Parse(f.server.URL)
 	// Inline credentials with a fake host that won't actually be
-	// dialled — we override the http client below with one that
+	// dialed — we override the http client below with one that
 	// rewrites the host transparently.
 	cfg := &edgegrid.Config{
 		Host:         u.Host,

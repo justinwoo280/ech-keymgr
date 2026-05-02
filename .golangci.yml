@@ -38,8 +38,12 @@ linters:
       check-type-assertions: true
       check-blank: false
     govet:
-      enable:
-        - shadow
+      # We deliberately do NOT enable 'shadow'. The `if err := f();
+      # err != nil { ... }` idiom unavoidably shadows any outer `err`
+      # in the same function and is the most common pattern in
+      # idiomatic Go. The signal-to-noise ratio of shadow on this
+      # codebase is too low to justify rewrites.
+      enable: []
     misspell:
       locale: US
     nakedret:

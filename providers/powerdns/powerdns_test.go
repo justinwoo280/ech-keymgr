@@ -61,7 +61,7 @@ func (f *fakePDNS) handle(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(204)
 	default:
-		http.Error(w, "unhandled "+r.Method, 405)
+		http.Error(w, "unhandled "+r.Method, http.StatusMethodNotAllowed)
 	}
 }
 
@@ -69,7 +69,7 @@ func (f *fakePDNS) applyPatch(ch rrSet) {
 	// remove any existing rrset with same name+type
 	out := f.zone.RRsets[:0]
 	for _, rs := range f.zone.RRsets {
-		if !(rs.Name == ch.Name && rs.Type == ch.Type) {
+		if rs.Name != ch.Name || rs.Type != ch.Type {
 			out = append(out, rs)
 		}
 	}

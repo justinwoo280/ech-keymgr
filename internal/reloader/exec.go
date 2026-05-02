@@ -26,7 +26,7 @@ func newExecReloader(cfg Config) (Reloader, error) {
 func (e *execReloader) Name() string { return "exec" }
 
 // Reload implements Reloader. ctx.Deadline() bounds the runtime; the
-// child is killed when the context is cancelled.
+// child is killed when the context is canceled.
 func (e *execReloader) Reload(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return err

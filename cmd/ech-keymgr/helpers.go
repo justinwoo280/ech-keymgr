@@ -72,7 +72,7 @@ func buildReloader(d *config.Domain) (reloader.Reloader, error) {
 	})
 }
 
-// openStore opens (or initialises) the keystore directory for d.
+// openStore opens (or initializes) the keystore directory for d.
 func openStore(d *config.Domain) (*keystore.Store, error) {
 	return keystore.OpenOrInit(d.Keydir, d.RecordFQDN, d.PublicName)
 }

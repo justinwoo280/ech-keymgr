@@ -32,7 +32,7 @@ const (
 	StateGrace State = "grace"
 )
 
-// IsValid reports whether s is a recognised lifecycle state.
+// IsValid reports whether s is a recognized lifecycle state.
 func (s State) IsValid() bool {
 	switch s {
 	case StateCurrent, StatePrevious, StateGrace:

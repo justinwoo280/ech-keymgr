@@ -97,10 +97,11 @@ func (c *Config) applyDefaultsAndResolve() error {
 			d.DNS.Credentials = cred
 		}
 	}
-	if !c.Verification.Enabled && c.Verification.DelayAfterPush == 0 {
-		// If verification is disabled, leave DelayAfterPush at zero.
-	}
-	if c.Verification.DelayAfterPush == 0 {
+	// When verification is enabled and the operator hasn't supplied
+	// a delay, fall back to the project default. (We don't bother
+	// touching DelayAfterPush when verification is disabled — the
+	// zero value is fine in that case because nothing reads it.)
+	if c.Verification.Enabled && c.Verification.DelayAfterPush == 0 {
 		c.Verification.DelayAfterPush = DefaultVerifyDelay
 	}
 	if c.Verification.OnMismatch == "" {
