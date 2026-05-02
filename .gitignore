@@ -1,0 +1,45 @@
+# Binaries
+/bin/
+/dist/
+# Anchored to repo root: matches a stray ./ech-keymgr binary from
+# `go build` but does NOT match the cmd/ech-keymgr source directory.
+/ech-keymgr
+*.exe
+*.test
+*.out
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local secrets / state
+*.local.yaml
+*.local.yml
+.env
+.env.*
+!/.env.example
+
+# Generated keys (NEVER commit real ECH keys)
+*.ech
+*.pem.ech
+/echkeydir/
+/var/
+
+# Coverage
+coverage.out
+coverage.html
+
+# Vendor (we prefer go modules)
+/vendor/
+
+# Temporary scratch dirs created during development (matches the
+# tmp_rovodev_ prefix convention used by tooling).
+/tmp_rovodev/
+tmp_rovodev_*

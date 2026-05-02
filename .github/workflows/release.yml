@@ -1,0 +1,86 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (must already exist)"
+        required: true
+
+permissions:
+  contents: write     # required to create/update GitHub Releases
+  packages: write     # in case of future container publishing
+  id-token: write     # for SLSA / cosign keyless signing later
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  goreleaser:
+    name: GoReleaser
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # GoReleaser needs full history for changelog generation.
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+
+      - name: Install Syft (for SBOM generation)
+        uses: anchore/sbom-action/download-syft@v0
+        # Pinned in .goreleaser.yml's `sboms:` section.
+
+      - name: Verify tests pass before releasing
+        run: go test -tags=all -race ./...
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          # Provided automatically by Actions; scoped to the running repo.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Sanity check that the published install.sh recipe still works
+  # against the freshly tagged release. Runs after GoReleaser
+  # finishes uploading assets.
+  verify-install:
+    name: verify install.sh against new release
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Wait for release assets to settle
+        run: sleep 30
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dry-run install.sh against the new release
+        run: |
+          sudo bash scripts/install.sh \
+            --release "${{ steps.tag.outputs.tag }}" \
+            --dry-run

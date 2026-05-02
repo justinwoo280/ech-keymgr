@@ -1,0 +1,111 @@
+# ech-keymgr configuration — fully commented example.
+#
+# This file is installed to /etc/ech-keymgr/config.yaml by install.sh
+# but is NOT auto-loaded; you have to edit it before enabling the
+# systemd unit. Only one credentials block needs to remain uncommented
+# for each domain you actually manage.
+#
+# Schema reference: docs/architecture.md §6
+#
+# Environment-variable references like ${VAR} or ${VAR:-fallback} are
+# expanded at load time. Use this for secrets so config.yaml itself
+# never holds plaintext tokens. The systemd unit reads
+# /etc/ech-keymgr/env at start, where you can put e.g.
+#
+#     CF_API_TOKEN=...
+#     PDNS_API_KEY=...
+#
+# rather than committing them here.
+
+# ---------------------------------------------------------------------
+# Domains: one entry per record_fqdn you want ech-keymgr to manage.
+# ---------------------------------------------------------------------
+domains:
+  - record_fqdn: hidden.example.com   # the real (inner SNI) hostname
+    public_name: example.com          # outer-SNI cover name. You are
+                                      # responsible for ensuring this
+                                      # FQDN has a valid X.509 cert
+                                      # configured in your TLS server.
+    keydir: /etc/echkeydir/hidden.example.com
+
+    rotation:
+      interval: 3h         # how often to mint a new HPKE key
+      grace_period: 6h     # how long old keys remain accepted
+
+    # Optional: list of HPKE cipher suites to advertise. Defaults to
+    # AES-128-GCM + ChaCha20-Poly1305 (the two ECH RFC 9849 SHOULDs).
+    # cipher_suites:
+    #   - aes128gcm-sha256
+    #   - chacha20poly1305-sha256
+
+    reload:
+      # Choose ONE of: signal | exec | systemd | noop
+      strategy: exec
+      command: /usr/bin/systemctl reload nginx
+      # # signal strategy:
+      # strategy: signal
+      # pid_file: /run/nginx.pid
+      # signal: SIGHUP
+      # # systemd strategy (requires systemctl on PATH and
+      # # appropriate sudoers rule if not running as root):
+      # strategy: systemd
+      # unit: nginx.service
+
+    dns:
+      provider: cloudflare              # one of: cloudflare | route53 | akamai | powerdns
+      zone: example.com                 # the DNS zone that owns record_fqdn
+      credentials_ref: cf_main          # references credentials block below
+      ttl: 300                          # HTTPS RR TTL
+
+    # Optional: soft DNS reconciliation (verify mode). Defaults shown.
+    # verification:
+    #   enabled: true
+    #   delay_after_push: 30s
+    #   on_mismatch: warn               # warn | error (still non-fatal)
+
+
+# ---------------------------------------------------------------------
+# Credentials: each block is independent. Reference by `credentials_ref`
+# above. The `provider` field MUST match the matching domain's
+# `dns.provider`.
+# ---------------------------------------------------------------------
+credentials:
+
+  # ---- Cloudflare ---------------------------------------------------
+  cf_main:
+    provider: cloudflare
+    api_token: ${CF_API_TOKEN}          # required; create a token with:
+                                        #   Zone : DNS : Edit
+                                        #   Zone : Zone : Read
+                                        # scoped to your zone(s).
+
+  # ---- AWS Route 53 -------------------------------------------------
+  # r53_main:
+  #   provider: route53
+  #   hosted_zone_id: Z2FDTNDATAQYW2     # required (or with leading "/hostedzone/")
+  #   region: us-east-1                  # optional; default chain otherwise
+  #   # Optional explicit credentials. Omit to use the standard AWS
+  #   # credential chain (env vars, ~/.aws/credentials, EC2 instance
+  #   # profile, IRSA, ECS task role, ...).
+  #   # access_key_id:     ${AWS_ACCESS_KEY_ID}
+  #   # secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+  #   # profile:           production
+
+  # ---- Akamai Edge DNS ----------------------------------------------
+  # akamai_main:
+  #   provider: akamai
+  #   # Either point to an .edgerc file...
+  #   edgerc_path: /root/.edgerc
+  #   section:     default
+  #   # ...OR provide credentials inline (mutually exclusive with above):
+  #   # host:          akab-xxx.luna.akamaiapis.net
+  #   # client_token:  akab-...
+  #   # client_secret: ${AKAMAI_CLIENT_SECRET}
+  #   # access_token:  akab-...
+
+  # ---- PowerDNS Authoritative API -----------------------------------
+  # pdns_main:
+  #   provider: powerdns
+  #   api_url:   https://pdns.example.com:8081
+  #   api_key:   ${PDNS_API_KEY}
+  #   server_id: localhost               # optional, default: localhost

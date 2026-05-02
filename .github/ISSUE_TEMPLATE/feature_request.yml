@@ -1,0 +1,50 @@
+name: Feature request
+description: Suggest a new capability or improvement
+title: "[feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an idea! ech-keymgr's scope is
+        **deliberately narrow** — see `docs/architecture.md` for the
+        in-scope / out-of-scope boundary. Please skim that first.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What pain are you trying to relieve? Concrete > abstract.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        How would the feature look from a user's perspective?
+        (config knob, CLI flag, new subcommand, library API, ...)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have considered
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Does this fit ech-keymgr's scope?
+      options:
+        - Yes — it's about ECH key lifecycle / rotation / DNS publication
+        - Maybe — needs discussion
+        - No — it's adjacent (e.g. ACME, certificate issuance, nginx config gen)
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context, links, sketches

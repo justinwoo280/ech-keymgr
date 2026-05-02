@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Go modules (root and any future submodules)
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 10
+    groups:
+      aws-sdk:
+        patterns:
+          - "github.com/aws/aws-sdk-go-v2*"
+      akamai:
+        patterns:
+          - "github.com/akamai/*"
+      cloudflare-circl:
+        patterns:
+          - "github.com/cloudflare/circl"
+      go-supplementary:
+        patterns:
+          - "golang.org/x/*"
+      cobra-stack:
+        patterns:
+          - "github.com/spf13/*"
+    commit-message:
+      prefix: "deps"
+      include: scope
+    labels:
+      - dependencies
+      - go
+
+  # GitHub Actions versions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:30"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: scope
+    labels:
+      - dependencies
+      - ci

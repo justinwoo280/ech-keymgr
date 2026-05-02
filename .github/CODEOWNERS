@@ -1,0 +1,47 @@
+# CODEOWNERS for ech-keymgr.
+#
+# A pattern's last matching rule wins. Order matters.
+# Code owners are automatically requested for review when a PR
+# touches matching files.
+
+# Default: everything routes to the project owner.
+*                                       @justinwoo280
+
+# CI / governance / repo metadata.
+/.github/                               @justinwoo280
+/SECURITY.md                            @justinwoo280
+/LICENSE                                @justinwoo280
+/NOTICE                                 @justinwoo280
+/docs/                                  @justinwoo280
+
+# Core ECH cryptographic packages — high-blast-radius.
+/internal/echconfig/                    @justinwoo280
+/internal/hpke/                         @justinwoo280
+/internal/pemfile/                      @justinwoo280
+
+# Core orchestration packages.
+/internal/keystore/                     @justinwoo280
+/internal/rotator/                      @justinwoo280
+/internal/reloader/                     @justinwoo280
+/internal/verify/                       @justinwoo280
+
+# Public packages — ABI sensitive.
+/pkg/                                   @justinwoo280
+
+# Officially maintained DNS providers.
+/providers/all.go                       @justinwoo280
+/providers/cloudflare/                  @justinwoo280
+/providers/route53/                     @justinwoo280
+/providers/akamai/                      @justinwoo280
+/providers/powerdns/                    @justinwoo280
+
+# Mock provider doubles as the contributor template; keep core
+# review until community-maintained equivalent emerges.
+/providers/community/mock/              @justinwoo280
+
+# Community providers: each provider's directory should override
+# this with the volunteer maintainer's handle. The umbrella file
+# itself stays under core ownership so additions/removals are
+# tracked centrally.
+/providers/community/                   @justinwoo280
+/providers/community/all.go             @justinwoo280

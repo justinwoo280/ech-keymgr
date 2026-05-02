@@ -1,0 +1,66 @@
+name: New DNS provider request
+description: Ask for support for a DNS hosting provider not yet on the list
+title: "[provider] "
+labels: ["enhancement", "provider", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Looking for community contributors! ech-keymgr ships with
+        Cloudflare / Route 53 / Akamai / PowerDNS officially.
+        Other providers are welcome as **community PRs**
+        (see `docs/provider-guide.md` and the provider PR template).
+
+        Filing this issue is a great way to find a co-contributor or
+        test partner.
+
+  - type: input
+    id: name
+    attributes:
+      label: Provider name
+      placeholder: "e.g. Bunny.net, Hetzner DNS, deSEC, AWS Lightsail DNS"
+    validations:
+      required: true
+
+  - type: input
+    id: docs
+    attributes:
+      label: Vendor API documentation URL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: https-rr
+    attributes:
+      label: Does the vendor support HTTPS / SVCB record types?
+      options:
+        - Yes, confirmed (link below)
+        - I think so but unsure
+        - No
+        - Don't know
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence of HTTPS RR support
+      description: |
+        Link to vendor docs, dashboard screenshot, `dig +short type65 ...` output, etc.
+
+  - type: dropdown
+    id: contributor
+    attributes:
+      label: Are you willing to write the provider yourself?
+      options:
+        - Yes, I will submit a PR
+        - I can help test against my account
+        - I can help review
+        - I just want to use it; need a maintainer to volunteer
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional notes

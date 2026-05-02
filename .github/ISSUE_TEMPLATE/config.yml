@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / discussion
+    url: https://github.com/justinwoo280/ech-keymgr/discussions
+    about: For open-ended questions, design discussions, or "is this the right tool for me?" — please use Discussions.
+  - name: Security vulnerability
+    url: https://github.com/justinwoo280/ech-keymgr/security/advisories/new
+    about: Privately report a vulnerability. Do NOT open a public issue for security bugs.

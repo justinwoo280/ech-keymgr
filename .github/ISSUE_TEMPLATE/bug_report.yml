@@ -1,0 +1,104 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Before filing, please check that
+        you're on the latest release and that no existing issue
+        matches.
+
+  - type: input
+    id: version
+    attributes:
+      label: ech-keymgr version
+      description: Output of `ech-keymgr --version`
+      placeholder: "v0.1.2 or 0.0.0-dev (git: abc123)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - FreeBSD
+        - Other (please describe in environment field)
+    validations:
+      required: true
+
+  - type: input
+    id: go
+    attributes:
+      label: Go version (only if you built from source)
+      placeholder: "go1.25.5"
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: DNS provider in use
+      options:
+        - cloudflare
+        - route53
+        - akamai
+        - powerdns
+        - mock
+        - community provider (please name in environment field)
+        - n/a (issue is provider-independent)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal, deterministic steps. Redact secrets.
+      placeholder: |
+        1. Run `ech-keymgr -c /tmp/cfg.yaml rotate example.com`
+        2. ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include the exact error message and a few lines of context.
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration (sanitised)
+      description: Your `config.yaml` with secrets removed
+      render: yaml
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Other environment notes
+      description: nginx version, OS distribution, container runtime, etc.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I have removed all secrets / API tokens / private domains from this report
+          required: true

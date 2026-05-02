@@ -1,0 +1,17 @@
+ech-keymgr
+Copyright 2026 The ech-keymgr Authors
+
+This product includes software developed at
+the ech-keymgr project (https://github.com/justinwoo280/ech-keymgr).
+
+This software depends on the following third-party libraries:
+
+- github.com/cloudflare/circl
+    Cloudflare CIRCL — Cryptographic Library
+    Licensed under BSD-3-Clause.
+    https://github.com/cloudflare/circl
+
+- golang.org/x/crypto
+    Go supplementary cryptography libraries
+    Licensed under BSD-3-Clause.
+    https://pkg.go.dev/golang.org/x/crypto

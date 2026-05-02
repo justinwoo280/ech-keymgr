@@ -1,0 +1,84 @@
+# systemd unit for ech-keymgr daemon mode.
+#
+# Installed by scripts/install.sh to /etc/systemd/system/ech-keymgr.service.
+# install.sh deliberately does NOT enable or start this unit. After
+# editing /etc/ech-keymgr/config.yaml, run:
+#
+#     sudo systemctl daemon-reload
+#     sudo systemctl enable --now ech-keymgr
+#
+# To check on it:
+#
+#     systemctl status ech-keymgr
+#     journalctl -u ech-keymgr -f
+
+[Unit]
+Description=ech-keymgr — automated ECH HPKE key rotation
+Documentation=https://github.com/justinwoo280/ech-keymgr
+Documentation=https://github.com/justinwoo280/ech-keymgr/blob/main/docs/install.md
+After=network-online.target
+Wants=network-online.target
+# If the configured DNS provider is on the same host (e.g. local
+# PowerDNS), uncomment the line below to start after it.
+# After=pdns.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ech-keymgr -c /etc/ech-keymgr/config.yaml daemon
+Restart=on-failure
+RestartSec=15s
+
+# Optional environment file for secrets (e.g. CF_API_TOKEN).
+# Created empty by install.sh. The dash means "ignore if missing".
+EnvironmentFile=-/etc/ech-keymgr/env
+
+User=ech-keymgr
+Group=ech-keymgr
+
+# --- Filesystem & namespace hardening --------------------------------
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+
+# Only these paths are writable. install.sh creates them with the
+# correct ownership and 0700 mode.
+ReadWritePaths=/var/lib/ech-keymgr /etc/echkeydir
+
+# --- Privileges -------------------------------------------------------
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RemoveIPC=true
+RestrictNamespaces=true
+
+# --- Network ---------------------------------------------------------
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# --- Syscall filter --------------------------------------------------
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @reboot @swap @debug @raw-io @cpu-emulation @obsolete
+
+# --- Logs ------------------------------------------------------------
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ech-keymgr
+
+# --- Resource limits -------------------------------------------------
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

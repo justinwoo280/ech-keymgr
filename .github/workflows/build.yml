@@ -1,0 +1,86 @@
+name: build
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Verify every supported build-tag combination compiles. Catches
+  # init() registrations that accidentally depend on another provider
+  # via a shared symbol.
+  tags:
+    name: tag=${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tag:
+          - ""           # no tags = default (only providers/* code that's tag-free)
+          - "all"
+          - "cloudflare"
+          - "route53"
+          - "akamai"
+          - "powerdns"
+          - "mock"
+          - "community"
+          - "cloudflare,route53"
+          - "akamai,powerdns,community"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+      - name: build cmd/ech-keymgr
+        run: |
+          if [ -n "${{ matrix.tag }}" ]; then
+            go build -tags='${{ matrix.tag }}' ./cmd/ech-keymgr
+          else
+            go build ./cmd/ech-keymgr
+          fi
+      - name: build all packages
+        run: |
+          if [ -n "${{ matrix.tag }}" ]; then
+            go build -tags='${{ matrix.tag }}' ./...
+          else
+            go build ./...
+          fi
+
+  # Cross-compile to every supported os/arch combo. Doesn't run tests
+  # (those need native CPUs); just proves the artifact builds.
+  cross:
+    name: ${{ matrix.goos }}/${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { goos: linux,   goarch: amd64 }
+          - { goos: linux,   goarch: arm64 }
+          - { goos: linux,   goarch: arm   }
+          - { goos: darwin,  goarch: amd64 }
+          - { goos: darwin,  goarch: arm64 }
+          - { goos: windows, goarch: amd64 }
+          - { goos: freebsd, goarch: amd64 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+      - name: cross-compile
+        env:
+          GOOS:   ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: go build -tags=all -o /tmp/ech-keymgr-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/ech-keymgr

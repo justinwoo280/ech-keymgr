@@ -1,0 +1,187 @@
+# GoReleaser configuration for ech-keymgr.
+# See: https://goreleaser.com
+#
+# Triggered by .github/workflows/release.yml on every git tag matching
+# v*. Do a local snapshot build with:
+#
+#     goreleaser release --snapshot --clean --skip=publish
+
+version: 2
+
+project_name: ech-keymgr
+
+before:
+  hooks:
+    - go mod tidy
+    - go test -tags=all ./...
+
+builds:
+  - id: ech-keymgr
+    main: ./cmd/ech-keymgr
+    binary: ech-keymgr
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+      - -tags=all
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.Commit={{.ShortCommit}}
+      - -X main.Date={{.Date}}
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      # Don't build 32-bit ARM for non-Linux OSes — no real demand.
+      - { goos: darwin,  goarch: arm    }
+      - { goos: windows, goarch: arm    }
+      - { goos: freebsd, goarch: arm    }
+      - { goos: windows, goarch: arm64  }
+      - { goos: freebsd, goarch: arm64  }
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: default
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}amd64
+      {{- else if eq .Arch "arm64" }}arm64
+      {{- else if eq .Arch "arm" }}armv{{ .Arm }}
+      {{- else }}{{ .Arch }}{{ end }}
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
+      - CHANGELOG.md
+      - SECURITY.md
+      - docs/install.md
+      - examples/config.example.yaml
+      - examples/systemd/ech-keymgr.service
+      - scripts/install.sh
+      - scripts/uninstall.sh
+    wrap_in_directory: true
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot+{{ .ShortCommit }}"
+
+# Software Bill of Materials — useful for supply-chain audits.
+sboms:
+  - id: default
+    artifacts: archive
+    documents:
+      - "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.sbom.json"
+
+changelog:
+  sort: asc
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?(feat|feature)(\(.+\))?!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?(fix|bug)(\(.+\))?!?:.+$'
+      order: 1
+    - title: Providers
+      regexp: '^.*?providers?(\(.+\))?!?:.+$'
+      order: 2
+    - title: Security
+      regexp: '^.*?(sec|security)(\(.+\))?!?:.+$'
+      order: 3
+    - title: Documentation
+      regexp: '^.*?docs?(\(.+\))?!?:.+$'
+      order: 4
+    - title: Dependencies
+      regexp: '^.*?(deps?|chore\(deps\))(\(.+\))?!?:.+$'
+      order: 5
+    - title: Other changes
+      order: 999
+  filters:
+    exclude:
+      - "^test:"
+      - "^ci:"
+      - "^Merge pull request"
+      - "^Merge branch"
+
+release:
+  github:
+    owner: justinwoo280
+    name: ech-keymgr
+  draft: false
+  prerelease: auto    # vX.Y.Z-rc1, -alpha, -beta become pre-releases automatically
+  mode: replace
+  header: |
+    ## ech-keymgr {{ .Tag }}
+
+    Drop-in tar/zip archives below. Quick install:
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/justinwoo280/ech-keymgr/{{ .Tag }}/scripts/install.sh \
+      | sudo bash -s -- --release {{ .Tag }}
+    ```
+  footer: |
+    ---
+    **Verifying downloads**: every archive is paired with a SHA-256
+    checksum in `{{ .ProjectName }}_{{ .Version }}_checksums.txt`
+    and an SBOM in `*.sbom.json`. Treat anything else as suspect.
+
+# nfpms: produce .deb / .rpm packages alongside tarballs.
+nfpms:
+  - id: ech-keymgr
+    package_name: ech-keymgr
+    vendor: ech-keymgr authors
+    homepage: https://github.com/justinwoo280/ech-keymgr
+    maintainer: justinwoo280 <opensource@example.com>
+    description: |
+      Automated rotation of ECH (RFC 9849) HPKE keys with DNS publication.
+      Manages HPKE key pairs, writes draft-farrell-tls-pemesni .ech files,
+      pushes the corresponding ech= parameter to a domain's HTTPS RR,
+      and triggers a hot reload of the consuming TLS server (e.g. nginx).
+    license: Apache-2.0
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/local/bin
+    contents:
+      - src: examples/config.example.yaml
+        dst: /etc/ech-keymgr/config.example.yaml
+        type: config|noreplace
+      - src: examples/systemd/ech-keymgr.service
+        dst: /lib/systemd/system/ech-keymgr.service
+      - src: docs/install.md
+        dst: /usr/share/doc/ech-keymgr/install.md
+      - src: SECURITY.md
+        dst: /usr/share/doc/ech-keymgr/SECURITY.md
+      - src: LICENSE
+        dst: /usr/share/doc/ech-keymgr/LICENSE
+      - src: NOTICE
+        dst: /usr/share/doc/ech-keymgr/NOTICE
+    overrides:
+      deb:
+        scripts:
+          postinstall: scripts/pkg/postinstall.sh
+          preremove:   scripts/pkg/preremove.sh
+      rpm:
+        scripts:
+          postinstall: scripts/pkg/postinstall.sh
+          preremove:   scripts/pkg/preremove.sh
