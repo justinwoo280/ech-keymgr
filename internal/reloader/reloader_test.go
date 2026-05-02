@@ -79,7 +79,10 @@ func TestSignal_ReadsPID_RejectsBadInput(t *testing.T) {
 }
 
 func TestSignal_PIDFileMissing(t *testing.T) {
-	r, err := New(Config{Strategy: StrategySignal, PIDFile: "/nonexistent/path/pid", Signal: "SIGUSR2"})
+	// Use SIGTERM because it exists on every platform (Windows
+	// has no SIGUSR1/2/HUP). The test only cares that we report
+	// the missing pid-file, not which signal we'd have sent.
+	r, err := New(Config{Strategy: StrategySignal, PIDFile: "/nonexistent/path/pid", Signal: "SIGTERM"})
 	if err != nil {
 		t.Fatal(err)
 	}

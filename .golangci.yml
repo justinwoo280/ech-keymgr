@@ -1,96 +1,91 @@
-# golangci-lint configuration for ech-keymgr.
-#
-# Goal: catch real bugs and style mistakes that hurt review velocity,
-# without becoming noise. Pragmatic > maximalist.
+# golangci-lint v2 configuration for ech-keymgr.
+# Schema reference: https://golangci-lint.run/usage/configuration/
 #
 # Run locally:
 #   golangci-lint run --build-tags=all ./...
 
+version: "2"
+
 run:
   timeout: 5m
-  go: "1.25"            # matches go.mod's `go 1.25.0`
   tests: true
   build-tags:
     - all
 
-output:
-  formats:
-    - format: colored-line-number
-  sort-results: true
-
 linters:
-  disable-all: true
+  default: none
   enable:
-    # Default enabled by golangci-lint, listed for clarity:
-    - errcheck         # unchecked errors
-    - gosimple         # code simplification
-    - govet            # standard go vet
-    - ineffassign      # ineffective assignments
-    - staticcheck      # SA family of static-analysis checks
-    - unused           # unused code
-    # Extra value-adds for our project:
-    - bodyclose        # http response body must be Closed
-    - contextcheck     # context propagation
-    - errorlint        # %w / errors.Is / errors.As correctness
-    - gofmt
-    - goimports
+    # Default-ish core checks.
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck       # subsumes gosimple in v2
+    - unused
+    # Extras that pay for themselves on this project.
+    - bodyclose
+    - contextcheck
+    - errorlint
     - misspell
     - nakedret
-    - nolintlint       # detect bogus nolint directives
-    - revive           # successor to golint
+    - nolintlint
+    - revive
     - unconvert
     - unparam
     - whitespace
 
-issues:
-  exclude-rules:
-    # Tests can be a bit looser.
-    - path: _test\.go
-      linters:
-        - errcheck
-        - unparam
-    # cobra command files often have similar boilerplate.
-    - path: cmd/ech-keymgr/cmd_.*\.go
-      linters:
-        - dupl
-  max-issues-per-linter: 0
-  max-same-issues: 0
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: false
+    govet:
+      enable:
+        - shadow
+    misspell:
+      locale: US
+    nakedret:
+      max-func-lines: 30
+    revive:
+      severity: warning
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: increment-decrement
+        - name: var-naming
+        - name: package-comments
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: indent-error-flow
+        - name: errorf
+        - name: empty-block
+        - name: superfluous-else
+        - name: unreachable-code
+        - name: redefines-builtin-id
 
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-    check-blank: false
-  govet:
-    enable:
-      - shadow
-  misspell:
-    locale: US
-  nakedret:
-    max-func-lines: 30
-  revive:
-    severity: warning
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
     rules:
-      - name: blank-imports
-      - name: context-as-argument
-      - name: context-keys-type
-      - name: error-return
-      - name: error-strings
-      - name: error-naming
-      - name: exported
-        arguments:
-          - "checkPrivateReceivers"
-          - "disableStutteringCheck"
-      - name: increment-decrement
-      - name: var-naming
-      - name: package-comments
-      - name: range
-      - name: receiver-naming
-      - name: time-naming
-      - name: unexported-return
-      - name: indent-error-flow
-      - name: errorf
-      - name: empty-block
-      - name: superfluous-else
-      - name: unused-parameter
-      - name: unreachable-code
-      - name: redefines-builtin-id
+      # Tests can be a bit looser.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - unparam
+      # cobra command files share boilerplate by design.
+      - path: cmd/ech-keymgr/cmd_.*\.go
+        linters:
+          - dupl
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

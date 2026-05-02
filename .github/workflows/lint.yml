@@ -27,14 +27,14 @@ jobs:
           cache: true
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        # v8 is the last major that accepts golangci-lint v2.x
+        # without requiring repo-wide migration to v3 schema.
+        # The .golangci.yml in this repo uses the v2 schema.
+        uses: golangci/golangci-lint-action@v8
         with:
-          # Pin a version built against Go 1.25+. Earlier releases
-          # were compiled with Go 1.24 and refuse to typecheck this
-          # repository because go.mod requires `go 1.25.0`.
-          # 1.62.x is the first golangci-lint family with Go 1.25
-          # binaries; we accept anything >= that.
-          version: v1.62.2
+          # Empty version = latest v2.x. Pin only if the action
+          # ever rejects an unstable build.
+          version: latest
           # Lint with full provider tags so /providers/* don't get
           # silently skipped.
           args: --build-tags=all --timeout=5m
