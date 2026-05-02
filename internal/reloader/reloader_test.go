@@ -2,15 +2,12 @@ package reloader
 
 import (
 	"context"
-	"fmt"
 	"os"
-	"os/signal"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"syscall"
 	"testing"
-	"time"
 )
 
 // ----------------------------------------------------------------
@@ -55,50 +52,11 @@ func TestNoop_NeverErrors(t *testing.T) {
 // signal strategy
 // ----------------------------------------------------------------
 
-func TestSignal_SendsSIGUSR1ToOurselves(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("signals not portable on Windows")
-	}
-	dir := t.TempDir()
-	pidFile := filepath.Join(dir, "pid")
-	if err := os.WriteFile(pidFile, []byte(fmt.Sprintf("%d\n", os.Getpid())), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	r, err := New(Config{Strategy: StrategySignal, PIDFile: pidFile, Signal: "SIGUSR1"})
-	if err != nil {
-		t.Fatal(err)
-	}
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGUSR1)
-	defer signal.Stop(ch)
-
-	if err := r.Reload(context.Background()); err != nil {
-		t.Fatal(err)
-	}
-	select {
-	case <-ch:
-		// got it
-	case <-time.After(2 * time.Second):
-		t.Fatalf("did not receive SIGUSR1 within 2s")
-	}
-}
-
-func TestSignal_DefaultIsSIGHUP(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("signals not portable on Windows")
-	}
-	dir := t.TempDir()
-	pidFile := filepath.Join(dir, "pid")
-	_ = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0o600)
-	r, err := New(Config{Strategy: StrategySignal, PIDFile: pidFile, Signal: ""})
-	if err != nil {
-		t.Fatal(err)
-	}
-	sr := r.(*signalReloader)
-	if sr.sig != syscall.SIGHUP {
-		t.Errorf("default sig = %v, want SIGHUP", sr.sig)
-	}
-}
+// TestSignal_SendsSIGUSR1ToOurselves and TestSignal_DefaultIsSIGHUP
+// (the latter follows immediately) live in reloader_unix_test.go
+// because they reference syscall.SIGUSR1 / syscall.SIGHUP which
+// don't exist on Windows. They moved out wholesale; do not re-add
+// them here.
 
 func TestSignal_ReadsPID_RejectsBadInput(t *testing.T) {
 	cases := map[string]string{
@@ -136,21 +94,38 @@ func TestParseSignal_RejectsUnknown(t *testing.T) {
 	}
 }
 
-func TestParseSignal_AcceptsBareName(t *testing.T) {
-	if got, err := parseSignal("usr1"); err != nil || got != syscall.SIGUSR1 {
-		t.Errorf("parse usr1 = %v, %v", got, err)
-	}
-}
+// TestParseSignal_AcceptsBareName for SIGUSR1 lives in
+// reloader_unix_test.go (Windows has no SIGUSR1). The Windows
+// equivalent is in reloader_windows_test.go and asserts SIGTERM.
 
 // ----------------------------------------------------------------
 // exec strategy
 // ----------------------------------------------------------------
 
+// findTrueCommand returns a path to a binary that exits 0 with no
+// output, suitable for the StrategyExec smoke test. The location
+// differs across platforms: Linux ships /bin/true, macOS only ships
+// /usr/bin/true, and on Windows we fall back to cmd /c exit 0 (and
+// special-case it in callers because the path may contain spaces).
+func findTrueCommand(t *testing.T) string {
+	t.Helper()
+	for _, p := range []string{"/usr/bin/true", "/bin/true"} {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	if path, err := exec.LookPath("true"); err == nil {
+		return path
+	}
+	t.Skip("no `true` binary found on this platform")
+	return ""
+}
+
 func TestExec_RunsCommand(t *testing.T) {
 	if runtime.GOOS == "windows" {
-		t.Skip("/bin/true unavailable on Windows")
+		t.Skip("StrategyExec uses POSIX-style command parsing; covered by reloader_windows_test.go")
 	}
-	r, err := New(Config{Strategy: StrategyExec, Command: "/bin/true"})
+	r, err := New(Config{Strategy: StrategyExec, Command: findTrueCommand(t)})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -175,7 +150,7 @@ func TestExec_RespectsContextCancel(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // pre-cancel
-	r, _ := New(Config{Strategy: StrategyExec, Command: "/bin/true"})
+	r, _ := New(Config{Strategy: StrategyExec, Command: findTrueCommand(t)})
 	if err := r.Reload(ctx); err == nil {
 		t.Errorf("expected ctx error")
 	}

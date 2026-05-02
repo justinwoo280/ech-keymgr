@@ -29,7 +29,12 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          # Pin a version built against Go 1.25+. Earlier releases
+          # were compiled with Go 1.24 and refuse to typecheck this
+          # repository because go.mod requires `go 1.25.0`.
+          # 1.62.x is the first golangci-lint family with Go 1.25
+          # binaries; we accept anything >= that.
+          version: v1.62.2
           # Lint with full provider tags so /providers/* don't get
           # silently skipped.
           args: --build-tags=all --timeout=5m

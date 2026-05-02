@@ -2,10 +2,13 @@ module github.com/justinwoo280/ech-keymgr
 
 go 1.25.0
 
-// Pin a toolchain that includes the GO-2026-4337 / GO-2026-4340
-// crypto/tls fixes. Anyone building with an older 'go' command will
-// have this toolchain auto-downloaded by the Go tooling.
-toolchain go1.25.7
+// Pin a toolchain that includes the latest known crypto/x509,
+// crypto/tls, and os.Root vulnerability fixes:
+//   GO-2026-4337  GO-2026-4340  GO-2026-4602
+//   GO-2026-4870  GO-2026-4946  GO-2026-4947
+// Anyone building with an older 'go' command will have this
+// toolchain auto-downloaded by the Go tooling.
+toolchain go1.25.9
 
 require (
 	github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.1.0
