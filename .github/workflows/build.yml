@@ -36,7 +36,7 @@ jobs:
           - "cloudflare,route53"
           - "akamai,powerdns,community"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25.x"
@@ -73,7 +73,7 @@ jobs:
           - { goos: windows, goarch: amd64 }
           - { goos: freebsd, goarch: amd64 }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25.x"

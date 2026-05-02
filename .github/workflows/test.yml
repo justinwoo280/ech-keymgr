@@ -27,7 +27,7 @@ jobs:
         # toolchain to pick up GO-2026-4337/4340 crypto/tls fixes.
         go: ["1.25.x"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Go ${{ matrix.go }}
         uses: actions/setup-go@v5
