@@ -22,7 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go: ["1.22", "1.23", "1.24", "1.25"]
+        # Pinned to 1.25.x because go.mod requires `go 1.25.0` (needed
+        # for transitive dependency compatibility) and we pin a 1.25.7+
+        # toolchain to pick up GO-2026-4337/4340 crypto/tls fixes.
+        go: ["1.25.x"]
     steps:
       - uses: actions/checkout@v4
 
@@ -36,7 +39,7 @@ jobs:
         run: go env
 
       - name: Verify go.mod is tidy
-        if: matrix.os == 'ubuntu-latest' && matrix.go == '1.25'
+        if: matrix.os == 'ubuntu-latest'
         run: |
           go mod tidy
           git diff --exit-code -- go.mod go.sum
@@ -47,14 +50,11 @@ jobs:
       - name: Build (all providers)
         run: go build -tags=all ./...
 
-      - name: Test (race + coverage)
-        run: go test -tags=all -race -coverprofile=coverage.out -covermode=atomic ./...
-
-      - name: Upload coverage artifact
-        if: matrix.os == 'ubuntu-latest' && matrix.go == '1.25'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.out
-          if-no-files-found: warn
-          retention-days: 14
+      - name: Test (race)
+        # We use -cover (statement-level summary) instead of
+        # -coverprofile=... because the latter triggers
+        # `go: no such tool "covdata"` on packages with no _test.go
+        # files (here: pkg/dns, providers, providers/community,
+        # cmd/ech-keymgr). Add a unit test to those packages later
+        # if a written profile is needed.
+        run: go test -tags=all -race -cover ./...

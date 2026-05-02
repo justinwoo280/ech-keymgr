@@ -20,7 +20,7 @@ files.
 | Architecture| amd64, arm64, or armv7                          |
 | Privileges  | `root` (via `sudo`) for the install step only   |
 | Network     | outbound HTTPS to GitHub + your DNS provider    |
-| Optional    | `go` 1.22+ if installing with `--from-source`   |
+| Optional    | `go` 1.25+ if installing with `--from-source`   |
 
 You do **not** need OpenSSL, Adobe Flash 😅, or any other system
 library. ech-keymgr is a static, CGO-free binary.

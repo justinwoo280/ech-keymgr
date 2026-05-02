@@ -40,7 +40,7 @@ TLS 1.3 handshakes.
 **Beta — feature-complete and well tested. Used in early production.**
 
 - ✅ All 18 planned tasks complete
-- ✅ 153 unit tests across 13 packages, full Linux/macOS/Windows × Go 1.22 – 1.25 matrix
+- ✅ 153 unit tests across 13 packages, full Linux/macOS/Windows × Go 1.25.x matrix
 - ✅ Cloudflare, AWS Route 53, Akamai Edge DNS, PowerDNS officially supported
 - ✅ Hardened systemd unit + interactive install/uninstall
 - ⏳ First public release (`v0.1.0`) coming soon
@@ -243,7 +243,7 @@ recoverable on the next cycle.
 | TLS server: Apache + ECH branch    | ✅ same `.ech` PEM format works                   |
 | TLS server: lighttpd + ECH branch  | ✅ same `.ech` PEM format works                   |
 | OpenSSL                            | ✅ 4.0+ (we don't link it; nginx does)            |
-| Go toolchain                       | ✅ 1.22 → 1.25 (CI matrix)                        |
+| Go toolchain                       | ✅ 1.25.x (CI matrix; toolchain pinned 1.25.7+)   |
 | OS                                 | ✅ Linux, macOS, Windows, FreeBSD                 |
 | Architectures                      | ✅ amd64, arm64, armv7                            |
 

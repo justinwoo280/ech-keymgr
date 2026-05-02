@@ -18,7 +18,7 @@ not breaking. The bar for changes reflects that.
 
 You need:
 
-- **Go 1.22 or newer** (CI tests against 1.22 → 1.25)
+- **Go 1.25 or newer** (CI pins 1.25.x to pick up the latest stdlib security patches)
 - That's it. **No CGO, no system libraries, no Docker required.**
 
 ```bash

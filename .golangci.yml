@@ -8,7 +8,7 @@
 
 run:
   timeout: 5m
-  go: "1.22"            # support oldest Go in our test matrix
+  go: "1.25"            # matches go.mod's `go 1.25.0`
   tests: true
   build-tags:
     - all
