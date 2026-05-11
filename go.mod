@@ -2,13 +2,16 @@ module github.com/justinwoo280/ech-keymgr
 
 go 1.25.0
 
-// Pin a toolchain that includes the latest known crypto/x509,
-// crypto/tls, and os.Root vulnerability fixes:
-//   GO-2026-4337  GO-2026-4340  GO-2026-4602
-//   GO-2026-4870  GO-2026-4946  GO-2026-4947
+// Pin a toolchain that includes the latest known stdlib vulnerability
+// fixes. Bumped each time govulncheck calls us out:
+//   1.25.7  GO-2026-4337  GO-2026-4340  (crypto/tls)
+//   1.25.9  GO-2026-4602  GO-2026-4870  (crypto/x509)
+//           GO-2026-4946  GO-2026-4947  (os.Root)
+//   1.25.10 GO-2026-4918  (net/http)
+//           GO-2026-4971  (net)
 // Anyone building with an older 'go' command will have this
 // toolchain auto-downloaded by the Go tooling.
-toolchain go1.25.9
+toolchain go1.25.10
 
 require (
 	github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.1.0
