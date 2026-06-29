@@ -1,5 +1,5 @@
-github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.1.0 h1:KvfpO2utLmpRq0fbC0UZRzdCERfLGLX1/dcYvG7pP7k=
-github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.1.0/go.mod h1:AxGyKKxAxaCNeGadscLgo+gBYEAKhNG6tRR5O0HjV30=
+github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.2.0 h1:LFe/58tcZv+uQTuOW/wnTm6y4t9D1bvq0vkn4XNhaTM=
+github.com/akamai/AkamaiOPEN-edgegrid-golang/v13 v13.2.0/go.mod h1:FFt6ELF13cBEF8SElNhtby7yWMbAQbYrmEZhmCHd2cc=
 github.com/aws/aws-sdk-go-v2 v1.41.9 h1:/rYeyO2+HrMztAmxAq9++XJtFMqSIpSsNA0yDGALYq4=
 github.com/aws/aws-sdk-go-v2 v1.41.9/go.mod h1:+HsoOEX80qAVUitj1A2DhCNTjmb3edVyuDypb6LNEeo=
 github.com/aws/aws-sdk-go-v2/config v1.32.20 h1:8VMDnWc/kEzxsI/1ngGM9mG81a8IGmIHD8KLcYGwagc=
