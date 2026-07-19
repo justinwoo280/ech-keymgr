@@ -30,7 +30,7 @@ jobs:
         # v8 is the last major that accepts golangci-lint v2.x
         # without requiring repo-wide migration to v3 schema.
         # The .golangci.yml in this repo uses the v2 schema.
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           # Empty version = latest v2.x. Pin only if the action
           # ever rejects an unstable build.
